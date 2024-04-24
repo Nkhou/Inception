@@ -15,6 +15,10 @@ services:
       MYSQL_USER: najat
       MYSQL_PASSWORD: password
     restart: always
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - 3306:3306
   # DB: 
   #   image: mariadb
   #   volumes:
