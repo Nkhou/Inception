@@ -10,15 +10,15 @@ services:
     build: requirements/mariadb/
     container_name: mariadb
     restart: always
-    volumes:
-      - ./data:/var/lib/mysql
-    ports:
-      - 3306:3306
-    # environment:
-      # MYSQL_ROOT_PASSWORD: password
-      # MYSQL_DATABASE: mydata
-      # MYSQL_USER: najat
-      # MYSQL_PASSWORD: password
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydata
+      MYSQL_USER: najat
+      MYSQL_PASSWORD: password
+    # volumes:
+    #   - ./data:/var/lib/mysql
+    # ports:
+    #   - 3306:3306
   # DB: 
   #   image: mariadb
   #   volumes:
