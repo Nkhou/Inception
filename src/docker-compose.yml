@@ -10,12 +10,8 @@ services:
     build: requirements/mariadb/
     container_name: mariadb
     restart: always
-    environment:
-      MYSQL_ROOT: root
-      MYSQL_ROOT_PASSWORD: passwordROOT
-      MYSQL_DATABASE: mydata
-      MYSQL_USER: najat
-      MYSQL_PASSWORD: password
+    env_file:
+      - .env
     # volumes:
     #   - ./data:/var/lib/mysql
     # ports:
