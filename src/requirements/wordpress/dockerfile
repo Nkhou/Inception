@@ -1,5 +1,44 @@
-FROM debian:bullseye 
-RUN apt-get update -y && apt-get upgrade && \
-    apt-get install -y \
-    php-fpm
+FROM debian:bullseye
 
+# Install PHP and PHP-FPM
+RUN apt-get update && apt-get install -y \
+    php-fpm \
+    php-mysql \
+    php-curl \
+    php-gd \
+    php-intl \
+    php-mbstring \
+    php-soap \
+    php-xml \
+    php-xmlrpc \
+    php-zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install other necessary packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    mariadb-client \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install WordPress
+RUN curl -O https://wordpress.org/latest.tar.gz && \
+    tar -zxvf latest.tar.gz && \
+    rm latest.tar.gz && \
+    mv wordpress /var/www/html
+
+# Set permissions for WordPress
+RUN chown -R www-data:www-data /var/www/html
+
+# Copy custom PHP-FPM configuration file
+COPY ./conf/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
+
+# Copy custom WordPress configuration file
+COPY ./conf/wp-config.php /var/www/html/wp-config.php
+
+# Expose PHP-FPM port (if necessary)
+EXPOSE 9000
+
+# Set the entry point to start PHP-FPM
+ENTRYPOINT ["php-fpm7.4", "-F"]

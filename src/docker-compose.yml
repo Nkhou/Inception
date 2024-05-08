@@ -21,10 +21,20 @@ services:
     container_name: wordpress
     image: wordpress:najat
     restart: always
-    env_file:
-      - .env
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: example
     volumes:
-      -wordpress:/var/www/html
+      - wordpress_data:/var/www/html
+    depends_on:
+      - mariadb
+  
+volumes:
+  wordpress_data:
+  data:
+
     # ports:
     #   - 3306:3306
   # DB: 
