@@ -1,26 +1,28 @@
 
 services:
-  # nginx:
-  #   build: requirements/nginx/
-  #   container_name: nginx
-  #   image: nginx:najat
-  #   ports:
-  #     - 443:443
-  #   restart: always
-  # mariadb:
-  #   build: requirements/mariadb/
-  #   container_name: mariadb
-  #   image: mariadb:najat
-  #   restart: always
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./data:/var/lib/mysql
+  nginx:
+    build: requirements/nginx/
+    container_name: nginx
+    image: nginx:najat
+    ports:
+      - 443:443
+    restart: always
+  mariadb:
+    build: requirements/mariadb/
+    container_name: mariadb
+    image: mariadb:najat
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./data:/var/lib/mysql
   wordpress:
     build: requirements/wordpress/
     container_name: wordpress
     image: wordpress:najat
     restart: always
+    env_file:
+      - .env
   # wordpress:
   #    build: requirements/wordpress/
   #    container_name: wordpress

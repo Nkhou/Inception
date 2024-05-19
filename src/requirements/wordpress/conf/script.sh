@@ -1,17 +1,5 @@
 #!/bin/bash
 
-# Variables (update these variables as per your requirements)
-DB_NAME="your_db_name"
-DB_USER="your_db_user"
-DB_PWD="your_db_password"
-DOMAIN_NAME="your_domain_name"
-WP_TITLE="Your WordPress Site Title"
-WP_ADMIN_USR="admin_user"
-WP_ADMIN_PWD="admin_password"
-WP_ADMIN_EMAIL="admin_email@example.com"
-WP_USR="author_user"
-WP_EMAIL="author_email@example.com"
-WP_PWD="author_password"
 
 # Create directories
 echo "Creating directories..."
