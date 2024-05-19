@@ -1,39 +1,44 @@
 
 services:
-  nginx:
-    build: requirements/nginx/
-    container_name: nginx
-    image: nginx:najat
-    ports:
-      - 443:443
-    restart: always
-  mariadb:
-    build: requirements/mariadb/
-    container_name: mariadb
-    image: mariadb:najat
-    restart: always
-    env_file:
-      - .env
-    volumes:
-      - ./data:/var/lib/mysql
+  # nginx:
+  #   build: requirements/nginx/
+  #   container_name: nginx
+  #   image: nginx:najat
+  #   ports:
+  #     - 443:443
+  #   restart: always
+  # mariadb:
+  #   build: requirements/mariadb/
+  #   container_name: mariadb
+  #   image: mariadb:najat
+  #   restart: always
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./data:/var/lib/mysql
   wordpress:
     build: requirements/wordpress/
     container_name: wordpress
     image: wordpress:najat
     restart: always
-    environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: example
-    volumes:
-      - wordpress_data:/var/www/html
-    depends_on:
-      - mariadb
+  # wordpress:
+  #    build: requirements/wordpress/
+  #    container_name: wordpress
+  #   image: wordpress:najat
+  #   restart: always
+    # environment:
+    #   WORDPRESS_DB_HOST: db
+    #   WORDPRESS_DB_NAME: wordpress
+    #   WORDPRESS_DB_USER: wordpress
+    #   WORDPRESS_DB_PASSWORD: example
+#     volumes:
+#       - wordpress_data:/var/www/html
+#     depends_on:
+#       - mariadb
   
-volumes:
-  wordpress_data:
-  data:
+# volumes:
+#   wordpress_data:
+#   data:
 
     # ports:
     #   - 3306:3306
