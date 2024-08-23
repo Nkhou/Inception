@@ -1,6 +1,5 @@
 #!/bin/bash
-
-
+sleep 30
 # Create directories
 echo "Creating directories..."
 mkdir -p /var/www/html
@@ -66,7 +65,7 @@ mkdir -p /run/php
 # Enable Redis Cache
 echo "Enabling Redis Cache..."
 wp redis enable --allow-root
-
+# sleep 30
 # Start PHP-FPM in foreground
 echo "Starting PHP-FPM..."
 /usr/sbin/php-fpm7.3 -F

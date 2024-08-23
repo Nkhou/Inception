@@ -1,7 +1,7 @@
 #!/bin/bash
 
 service mariadb start
-
+sleep 10
 # cat 2> /dev/null
 
 mysql -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
