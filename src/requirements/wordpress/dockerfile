@@ -1,11 +1,10 @@
 FROM debian:bullseye
 
-
 RUN apt-get update && \
     apt-get -y install wget php php-fpm php-mysql mariadb-client curl
 
 COPY ./conf/script.sh /
-COPY ./conf/wp-config.php /
+# COPY ./conf/wp-config.php /
 RUN chmod +x /script.sh
 
-CMD [ "./script.sh" ]
+CMD [ "/script.sh" ]

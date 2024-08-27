@@ -14,8 +14,15 @@ services:
     restart: always
     env_file:
       - .env
-    volumes:
-      - ./data:/var/lib/mysql
+    # volumes:
+    #   - ./mariadb_data:/var/lib/mysql
+    # ports:
+    #   - "3306:3306"  # Expose port for debugging
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
   wordpress:
     build: requirements/wordpress/
     container_name: wordpress
@@ -23,6 +30,8 @@ services:
     restart: always
     env_file:
       - .env
+    # depends_on:
+    #   - ma
   # wordpress:
   #    build: requirements/wordpress/
   #    container_name: wordpress

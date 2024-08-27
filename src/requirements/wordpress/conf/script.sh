@@ -1,5 +1,5 @@
 #!/bin/bash
-sleep 30
+sleep 10
 # Create directories
 echo "Creating directories..."
 mkdir -p /var/www/html
@@ -30,10 +30,9 @@ echo "Configuring wp-config.php..."
 mv wp-config-sample.php wp-config.php
 
 # Update wp-config.php with database credentials
-sed -i -r "s/database_name_here/$DB_NAME/1" wp-config.php
-sed -i -r "s/username_here/$DB_USER/1" wp-config.php
-sed -i -r "s/password_here/$DB_PWD/1" wp-config.php
-
+sed -i -r "s/MYSQL_DATABASE/${DB_NAME}/" wp-config.php
+sed -i -r "s/MYSQL_USER/${DB_USER}/" wp-config.php
+sed -i -r "s/MYSQL_ROOT_PASSWORD/${DB_PASSWORD}/" wp-config.php
 # Install WordPress
 echo "Installing WordPress..."
 wp core install --url="$DOMAIN_NAME" --title="$WP_TITLE" --admin_user="$WP_ADMIN_USR" --admin_password="$WP_ADMIN_PWD" --admin_email="$WP_ADMIN_EMAIL" --skip-email --allow-root
