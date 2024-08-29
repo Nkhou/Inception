@@ -1,114 +1,99 @@
 #!/bin/bash
 set -e
-sleep 10
-# Function to check if a command exists
-command_exists() {
-    command -v "$1" >/dev/null 2>&1
+
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
+}
+network_diagnostics() {
+    log "Running network diagnostics..."
+    log "Container IP address:"
+    hostname -I
+    log "Container DNS settings:"
+    cat /etc/resolv.conf
+    log "Pinging mariadb:"
+    ping -c 4 mariadb
+    log "Trying to connect to mariadb:"
+    nc -zv mariadb 3306
+    log "Environment variables:"
+    env | grep -E 'MYSQL|WORDPRESS|WP'
+}
+wait_for_db() {
+    log "Waiting 10 seconds before attempting database connection..."
+    sleep 10
+
+    log "Waiting for database to be ready..."
+    for i in {1..30}; do
+        if mysql -h mariadb -u'root' -p"$MYSQL_ROOT_PASSWORD" -e "SELECT 1" >/dev/null 2>&1; then
+            log "Database is ready"
+            return 0
+        fi
+        log "Still waiting for database... (Attempt $i/30)"
+        log "Connection error: $(mysql -h mariadb -u"root" -p"$MYSQL_ROOT_PASSWORD" -e "SELECT 1" 2>&1)"
+        sleep 5
+    done
+    log "Database did not become ready in time"
+    return 1
 }
 
-# Check for required environment variables
-required_vars=(MYSQL_DATABASE MYSQL_USER DB_PASSWORD DB_HOST DOMAIN_NAME WP_TITLE WP_ADMIN_USR WP_ADMIN_PWD WP_ADMIN_EMAIL WP_USR WP_EMAIL WP_PWD)
-for var in "${required_vars[@]}"; do
-    if [ -z "${!var}" ]; then
-        echo "Error: $var is not set"
-        exit 1
+setup_wordpress() {
+    log "Setting up WordPress..."
+
+    # Ensure the target directory exists
+    mkdir -p /var/www/html
+    cd /var/www/html || exit 1
+
+    # Download and install WP-CLI if not already present
+    if [ ! -f "/usr/local/bin/wp" ]; then
+        log "Downloading WP-CLI..."
+        curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        chmod +x wp-cli.phar
+        mv wp-cli.phar /usr/local/bin/wp
     fi
-done
-echo "Attempting to connect to database at host: $DB_HOST"
-echo "Database User: $MYSQL_USER"
-echo "Database Name: $MYSQL_DATABASE"
 
-# Function to check MySQL connection
-check_mysql_connection() {
-    mysqladmin ping -h"$DB_HOST" -u"$MYSQL_USER" -p"$DB_PASSWORD" >/dev/null 2>&1
+    # Download WordPress core
+    log "Downloading WordPress..."
+    wp core download --allow-root || { log "Failed to download WordPress"; exit 1; }
+
+    # Create wp-config.php
+    log "Creating wp-config.php..."
+    wp config create --dbname="$MYSQL_DATABASE" --dbuser="$MYSQL_USER" --dbpass="$MYSQL_PASSWORD" --dbhost="mariadb" --allow-root || { log "Failed to create wp-config.php"; exit 1; }
+
+    # Install WordPress
+    log "Installing WordPress..."
+    wp core install --url="$DOMAIN_NAME" --title="INCEPTION" --admin_user="$WP_ADMIN_USR" --admin_password="$WP_ADMIN_PWD" --admin_email="$WP_EMAIL" --allow-root || { log "Failed to install WordPress"; exit 1; }
+
+    # Create additional user
+    log "Creating additional user..."
+    wp user create "$WP_USR" "$WP_EMAIL" --role=author --user_pass="$WP_PWD" --allow-root || { log "Failed to create additional user"; exit 1; }
+
+    log "WordPress setup completed successfully"
 }
 
-# Wait for database with a timeout
-timeout=300  # 5 minutes timeout
-elapsed=0
-while ! check_mysql_connection && [ $elapsed -lt $timeout ]; do
-    echo "Waiting for database connection... (${elapsed}s elapsed)"
-    sleep 5
-    elapsed=$((elapsed + 5))
-done
+main() {
+    log "Starting WordPress setup script"
 
-if [ $elapsed -ge $timeout ]; then
-    echo "Error: Unable to connect to the database after ${timeout} seconds"
-    echo "Please check your database credentials and connection details"
-    exit 1
-fi
+    # Check for required environment variables
+    required_vars="MYSQL_DATABASE MYSQL_USER MYSQL_PASSWORD DOMAIN_NAME WP_ADMIN_USR WP_ADMIN_PWD WP_EMAIL WP_USR WP_EMAIL WP_PWD"
+    for var in $required_vars; do
+        if [ -z "${!var}" ]; then
+            log "Error: Required environment variable $var is not set."
+            exit 1
+        fi
+    done
 
-echo "Successfully connected to the database"
+    
+    # Ensure /run/php directory exists
+    mkdir -p /run/php
 
-# Create directories
-echo "Creating directories..."
-mkdir -p /var/www/html
+    # Wait for database to be ready
+    wait_for_db || exit 1
 
-# Navigate to html directory
-cd /var/www/html
+    # Setup WordPress
+    setup_wordpress
 
-# Clean any existing files
-echo "Cleaning existing files..."
-rm -rf *
+    # Start PHP-FPM
+    log "Starting PHP-FPM..."
+    exec /usr/sbin/php-fpm7.4 -F
+}
 
-# Download WP-CLI if not already installed
-if ! command_exists wp; then
-    echo "Downloading WP-CLI..."
-    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-    chmod +x wp-cli.phar
-    mv wp-cli.phar /usr/local/bin/wp
-fi
-
-# Download WordPress core files
-echo "Downloading WordPress core files..."
-wp core download --allow-root
-
-# Configure wp-config.php
-echo "Configuring wp-config.php..."
-wp config create --dbname="$MYSQL_DATABASE" --dbuser="$MYSQL_USER" --dbpass="$MYSQL_ROOT_PASSWORD" --dbhost="$DB_HOST" --allow-root
-
-# Install WordPress
-echo "Installing WordPress..."
-wp core install --url="$DOMAIN_NAME" --title="$WP_TITLE" --admin_user="$WP_ADMIN_USR" --admin_password="$WP_ADMIN_PWD" --admin_email="$WP_ADMIN_EMAIL" --skip-email --allow-root
-
-# Create additional WordPress user
-echo "Creating WordPress user..."
-wp user create "$WP_USR" "$WP_EMAIL" --role=author --user_pass="$WP_PWD" --allow-root
-
-# Install and activate Astra theme
-echo "Installing and activating Astra theme..."
-wp theme install astra --activate --allow-root
-
-# Install and activate Redis Cache plugin
-echo "Installing and activating Redis Cache plugin..."
-wp plugin install redis-cache --activate --allow-root
-
-# Update all plugins
-echo "Updating all plugins..."
-wp plugin update --all --allow-root
-
-# Modify PHP-FPM configuration to listen on port 9000 instead of a socket
-echo "Configuring PHP-FPM to listen on port 9000..."
-sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = 9000|g' /etc/php/7.3/fpm/pool.d/www.conf
-
-# Create PHP-FPM run directory
-echo "Creating PHP-FPM run directory..."
-mkdir -p /run/php
-
-# Check Redis connection and enable Redis Cache if available
-if command_exists redis-cli && redis-cli ping > /dev/null 2>&1; then
-    echo "Enabling Redis Cache..."
-    wp redis enable --allow-root
-else
-    echo "Warning: Redis is not accessible. Skipping Redis Cache setup."
-fi
-
-# Set appropriate permissions
-echo "Setting file permissions..."
-chown -R www-data:www-data /var/www/html
-find /var/www/html -type d -exec chmod 755 {} \;
-find /var/www/html -type f -exec chmod 644 {} \;
-
-# Start PHP-FPM
-echo "Starting PHP-FPM..."
-exec /usr/sbin/php-fpm7.3 -F
+main

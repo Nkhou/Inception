@@ -3,3 +3,5 @@ user = mysql
 port = 3306
 datadir = /var/lib/mysql
 bind-address = 0.0.0.0
+aria-pagecache-buffer-size = 64M
+aria-log-purge = 1

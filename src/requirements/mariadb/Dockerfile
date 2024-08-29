@@ -1,5 +1,4 @@
-FROM debian:bullseye
-
+FROM debian:bullseye 
 # Update and install MariaDB server and client
 RUN apt-get update -y && \
     apt-get upgrade -y && \
