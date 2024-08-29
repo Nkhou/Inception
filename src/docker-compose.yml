@@ -1,12 +1,13 @@
 
+version: "3.8"
 services:
-  nginx:
-    build: requirements/nginx/
-    container_name: nginx
-    image: nginx:najat
-    ports:
-      - 443:443
-    restart: always
+#   nginx:
+#     build: requirements/nginx/
+#     container_name: nginx
+#     image: nginx:najat
+#     ports:
+#       - 443:443
+#     restart: always
   mariadb:
     build: requirements/mariadb/
     container_name: mariadb
@@ -23,13 +24,13 @@ services:
     #   interval: 10s
     #   timeout: 5s
     #   retries: 5
-  wordpress:
-    build: requirements/wordpress/
-    container_name: wordpress
-    image: wordpress:najat
-    restart: always
-    env_file:
-      - .env
+  # wordpress:
+  #   build: requirements/wordpress/
+  #   container_name: wordpress
+  #   image: wordpress:najat
+  #   restart: always
+  #   env_file:
+  #     - .env
     # depends_on:
     #   - ma
   # wordpress:
