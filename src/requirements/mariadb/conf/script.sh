@@ -1,19 +1,23 @@
 #!/bin/bash
 
-echo "Starting MariaDB setup script"
+# echo "Starting MariaDB setup script"
 
-echo "Starting MariaDB server..."
-service mariadb start
+# echo "Starting MariaDB server..."
+# service mariadb start
 
-echo "Waiting for MariaDB to be ready..."
-until mysqladmin ping >/dev/null 2>&1; do
-  echo "Still waiting..."
-  sleep 2
-done
-echo "MariaDB is ready"
+# echo "Waiting for MariaDB to be ready..."
+# until mysqladmin ping >/dev/null 2>&1; do
+#   echo "Still waiting..."
+#   sleep 2
+# done
+# echo "MariaDB is ready"
+
+mysqld_safe &
+
+sleep 3
 
 echo "Checking for root password..."
-if [ -n "$MYSQL_ROOT_PASSWORD" ]; then
+# if [ -n "$MYSQL_ROOT_PASSWORD" ]; then
   echo "Root password is set. Proceeding with database setup."
   
   echo "Creating database ${MYSQL_DATABASE}..."
@@ -29,13 +33,15 @@ if [ -n "$MYSQL_ROOT_PASSWORD" ]; then
   mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "FLUSH PRIVILEGES;" || echo "Failed to flush privileges"
   
   echo "Database setup completed"
-else
-  echo "MYSQL_ROOT_PASSWORD is not set. Cannot initialize database."
-  exit 1
-fi
+# else
+#   echo "MYSQL_ROOT_PASSWORD is not set. Cannot initialize database."
+#   exit 1
+# fi
 
-echo "Keeping MariaDB running..."
-tail -f /dev/null
+mysqladmin -u root -p"123" shutdown
+
+echo "MariaDB shutdown..."
+mysqld_safe
 # mysql -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
 # mysql -e "CREATE USER IF NOT EXISTS \`${MYSQL_USER}\`@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';"
 # mysql -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO \`${MYSQL_USER}\`@'%';"

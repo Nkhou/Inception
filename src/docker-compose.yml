@@ -1,22 +1,26 @@
 
-version: "3"
+version: "3.8"
+
+networks:
+  inception:
+    name: inception
 services:
+  mariadb:
+    build: requirements/mariadb/
+    container_name: mariadb
+    image: mariadb:najat
+    env_file:
+      - .env
+    networks:
+      -  inception
+    restart: on-failure
   nginx:
     build: requirements/nginx/
     container_name: nginx
     image: nginx:najat
     ports:
       - 443:443
-    restart: always
-  mariadb:
-    build: requirements/mariadb/
-    container_name: mariadb
-    image: mariadb:najat
-    restart: always
-    networks:
-      -  inception
-    env_file:
-      - .env
+    restart: on-failure
     # volumes:
     #   - ./mariadb_data:/var/lib/mysql
     # ports:
@@ -30,15 +34,13 @@ services:
     build: requirements/wordpress/
     container_name: wordpress
     image: wordpress:najat
-    restart: always
+    restart: on-failure
     networks:
       -  inception
     env_file:
       - .env
 
-networks:
-  inception:
-    name: inception
+
       # volumes:
     #   - WordPress:/var/www/html
 

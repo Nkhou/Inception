@@ -2,9 +2,9 @@ FROM debian:bullseye
 # Update and install MariaDB server and client
 RUN apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get install -y mariadb-server mariadb-client && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y mariadb-server mariadb-client
+    # apt-get clean  \
+    # rm -rf /var/lib/apt/lists/*
 
 # Copy configuration file if needed
 # COPY ./conf/myconf.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
