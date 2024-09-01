@@ -38,7 +38,7 @@ echo "Checking for root password..."
 #   exit 1
 # fi
 
-mysqladmin -u root -p"123" shutdown
+mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" shutdown
 
 echo "MariaDB shutdown..."
 mysqld_safe
