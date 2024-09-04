@@ -1,9 +1,5 @@
 
-version: "3.8"
-
-networks:
-  inception:
-    name: inception
+version: "3.9"
 services:
   mariadb:
     build: requirements/mariadb/
@@ -11,9 +7,11 @@ services:
     image: mariadb:najat
     env_file:
       - .env
+    restart: on-failure
+    # volumes:
+    #  - ./data:/var/lib/mysql
     networks:
       -  inception
-    restart: on-failure
   nginx:
     build: requirements/nginx/
     container_name: nginx
@@ -21,62 +19,41 @@ services:
     ports:
       - 443:443
     restart: on-failure
+    networks:
+      -  inception
     # volumes:
-    #   - ./mariadb_data:/var/lib/mysql
-    # ports:
-    #   - "3306:3306"  # Expose port for debugging
-    # healthcheck:
-    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
+    #   - wordpress:/var/www/html
   wordpress:
     build: requirements/wordpress/
     container_name: wordpress
     image: wordpress:najat
     restart: on-failure
+    volumes:
+      - Wordpress:/var/www/html
     networks:
       -  inception
     env_file:
       - .env
+    depends_on:
+      - mariadb
 
 
-      # volumes:
-    #   - WordPress:/var/www/html
+volumes:
+  Wordpress:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/nkhoudro/Desktop/data/wp
 
-  # volumes:
-  # WordPress:
-  #   driver: local
-  #   driver_opts:
-  #      o: bind
-  #      type: none
-  #      device: /home/nkhoudro/Desktop/data/WP
-    # depends_on:
-    #   - ma
-  # wordpress:
-  #    build: requirements/wordpress/
-  #    container_name: wordpress
-  #   image: wordpress:najat
-  #   restart: always
-    # environment:
-    #   WORDPRESS_DB_HOST: db
-    #   WORDPRESS_DB_NAME: wordpress
-    #   WORDPRESS_DB_USER: wordpress
-    #   WORDPRESS_DB_PASSWORD: example
-#     volumes:
-#       - wordpress_data:/var/www/html
-#     depends_on:
-#       - mariadb
-  
-# volumes:
-#   wordpress_data:
-#   data:
+  mariadb:
+    name: mariadb
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/nkhoudro/Desktop/data/db
 
-    # ports:
-    #   - 3306:3306
-  # DB: 
-  #   image: mariadb
-  #   volumes:
-  #     - data:/var/lib/mysql
-  #   ports:
-  #     - "3306:3306"
+networks:
+  inception:
+    name: inception
