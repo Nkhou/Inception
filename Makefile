@@ -18,11 +18,13 @@ status:
 	docker ps -a
 
 fclean:
-	docker-compose -f $(DOCKER_COMPOSE) down --volumes
+	# docker-compose -f $(DOCKER_COMPOSE) down --volumes
 	docker container prune -f
 	docker volume prune -f
 	docker image prune -f
 	docker system prune -f
-	sudo rm -rf /home/saboulal/data/*/* 
+	sudo rm -rf /home/nkhoudro/data/Desktop/*/* 
 	docker network prune -f
 	
+# docker stop $(docker ps -a -q)
+# docker rm $(docker ps -a -q)

@@ -7,14 +7,14 @@ RUN apt-get update -y && \
     # rm -rf /var/lib/apt/lists/*
 
 # Copy configuration file if needed
-# COPY ./conf/myconf.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # Copy and set permissions for the startup script
 COPY ./conf/script.sh /script.sh
 RUN chmod +x /script.sh
 
 # Expose MariaDB port
-# EXPOSE 3306
+EXPOSE 3306
 
 # Set the entrypoint
 ENTRYPOINT ["/script.sh"]
