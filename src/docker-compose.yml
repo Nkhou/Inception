@@ -44,7 +44,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /home/nkhoudro/Desktop/data/wp
+      device: /home/nkh/Desktop/data/wp
 
   mariadb:
     name: mariadb
@@ -52,7 +52,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /home/nkhoudro/Desktop/data/db
+      device: /home/nkh/Desktop/data/db
 
 networks:
   inception:
