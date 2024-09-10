@@ -8,8 +8,8 @@ services:
     env_file:
       - .env
     restart: on-failure
-    # volumes:
-    #  - ./data:/var/lib/mysql
+    volumes:
+     - mariadb:/var/lib/mysql
     networks:
       -  inception
   nginx:
@@ -21,15 +21,15 @@ services:
     restart: on-failure
     networks:
       -  inception
-    # volumes:
-    #   - wordpress:/var/www/html
+    volumes:
+      - wordpress:/var/www/html
   wordpress:
     build: requirements/wordpress/
     container_name: wordpress
     image: wordpress:najat
     restart: on-failure
     volumes:
-      - Wordpress:/var/www/html
+      - wordpress:/var/www/html
     networks:
       -  inception
     env_file:
@@ -39,12 +39,12 @@ services:
 
 
 volumes:
-  Wordpress:
+  wordpress:
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: /home/nkh/Desktop/data/wp
+      device: /home/nkhoudro/Desktop/data/wp
 
   mariadb:
     name: mariadb
@@ -52,7 +52,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /home/nkh/Desktop/data/db
+      device: /home/nkhoudro/Desktop/data/db
 
 networks:
   inception:

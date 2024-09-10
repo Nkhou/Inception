@@ -1,9 +1,9 @@
 all: up
 
 up:
-	mkdir -p /home/nkh/Desktop/data/wp
-	mkdir -p /home/nkh/Desktop/data/db
-	docker-compose -f ./src/docker-compose.yml up -d --build 
+	mkdir -p /home/nkhoudro/Desktop/data/wp
+	mkdir -p /home/nkhoudro/Desktop/data/db
+	docker-compose -f ./src/docker-compose.yml up --build 
 
 down:
 	docker-compose -f ./src/docker-compose.yml down 
@@ -25,8 +25,7 @@ fclean:
 	docker volume prune -f
 	docker image prune -f
 	docker system prune -f
-	sudo rm -rf /home/nkh/Desktop/data/*/* 
-	sudo rm -rf /home/nkhoudro/Desktop/data/*/* 
+	sudo rm -rf ../data/
 	docker network prune -f
 	
 # docker stop $(docker ps -a -q)
