@@ -10,10 +10,10 @@ RUN apt-get update -q && \
 
 # RUN apt-get install OpenSSL -y
 RUN mkdir /etc/nginx/ssl
-RUN openssl req -x509 -nodes -out /etc/nginx/ssl/inception.crt -keyout /etc/nginx/ssl/inception.key -subj "/C=AR/L=KHOURIBGA/OU=1337/CN=nkhoudro.42.fr/UID=nkhoudro"
-# RUN chmod 600 nginx-selfsigned.key
+RUN openssl req -x509 -nodes -out  /etc/nginx/ssl/nkhoudro.crt -keyout /etc/nginx/ssl/nkhoudro.key -subj "/C=AR/L=KHOURIBGA/OU=1337/CN=nkhoudro.42.fr/UID=nkhoudro"
+# RUN chmod +x  /etc/ssl/certs/nkhoudro.crt
 
-# RUN chmod 600 nginx-selfsigned.crt
+# RUN chmod +x /etc/ssl/private/nkhoudro.key
 COPY ./conf/nginx.conf /etc/nginx/conf.d
 RUN mkdir -p /run/nginx
 # RUN chmod 755 /var/www/html
