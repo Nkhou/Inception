@@ -14,4 +14,4 @@ COPY ./conf/nginx.conf /etc/nginx/conf.d
 
 EXPOSE 443 
 
-ENTRYPOINT ["/script.sh"]
+CMD ["/script.sh"]

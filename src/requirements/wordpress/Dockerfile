@@ -8,5 +8,6 @@ RUN sed -i 's#listen = /run/php/php7.4-fpm.sock#listen = 0.0.0.0:9000#' /etc/php
 COPY ./conf/script.sh /
 # COPY ./conf/wp-config.php /
 RUN chmod +x /script.sh
+# EXPOSE 9000
 
 CMD ["/script.sh"]
