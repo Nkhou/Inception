@@ -3,7 +3,7 @@ all: up
 up:
 	mkdir -p /home/nkhoudro/Desktop/data/wp
 	mkdir -p /home/nkhoudro/Desktop/data/db
-	docker-compose -f ./src/docker-compose.yml up --build 
+	docker-compose -f ./src/docker-compose.yml up -d --build 
 
 down:
 	docker-compose -f ./src/docker-compose.yml down 
@@ -18,15 +18,10 @@ status:
 	docker ps -a
 
 fclean:
-	# docker-compose -f $(DOCKER_COMPOSE) down --volumes
-	# docker stop $(docker ps -a -q)
-	# docker rm $(docker ps -a -q)
+	docker-compose -f ./src/docker-compose.yml down --rmi all -v	
+	docker network prune -f
 	docker container prune -f
 	docker volume prune -f
 	docker image prune -f
 	docker system prune -f
 	sudo rm -rf ../data/
-	docker network prune -f
-	
-# docker stop $(docker ps -a -q)
-# docker rm $(docker ps -a -q)
