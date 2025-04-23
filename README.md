@@ -29,12 +29,9 @@ cd Inception
 docker-compose up --build
 ```
 ## 📚 Documentation
-**nginx**
 - https://hub.docker.com/_/nginx
 - https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/
-**mariadb**
 - https://hub.docker.com/_/mariadb
 - https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/
 - https://mariadb.com/docs/server/connect/command-line/
-**wordpress**
 - https://hub.docker.com/_/wordpress
